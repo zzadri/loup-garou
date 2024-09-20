@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Mobile - Loup Garou</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/mobile.css">
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+
+<body>
+    <div id="container">
+        <h1>Rejoindre la Partie</h1>
+
+        <div id="loginSection">
+            <input type="text" id="username" placeholder="Entrez votre nom" required>
+            <button id="joinGameButton">Rejoindre le jeu</button>
+        </div>
+
+        <div id="gameInfoSection" style="display:none;">
+            <h2>Bienvenue <span id="playerName"></span> !</h2>
+            <p>Vous avez rejoint la partie en tant que joueur.</p>
+            <div id="playerCard" class="card hidden">
+                <img id="roleImage" src="" alt="Image du rôle">
+            </div>
+        </div>
+    </div>
+
+    <script src="./js/mobile.js" defer></script>
+
+</body>
+
+</html>

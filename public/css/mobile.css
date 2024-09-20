@@ -1,0 +1,47 @@
+#container {
+    text-align: center;
+}
+
+.card {
+    width: 150px;
+    height: 150px;
+    text-align: center;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin: 20px auto;
+}
+
+.card.hidden {
+    background-image: url('/images/player.png');
+}
+
+.card img {
+    max-width: 100%;
+    max-height: 100%;
+    display: none;
+}
+
+.card.revealed img {
+    display: block;
+}
+
+.card.hidden img {
+    display: none;
+}
+
+h1, h2, p {
+    margin: 10px;
+}
+
+input, button {
+    margin-top: 10px;
+    padding: 10px;
+    font-size: 18px;
+}
