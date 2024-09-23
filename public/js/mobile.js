@@ -45,3 +45,8 @@ playerCard.addEventListener("click", () => {
 socket.on("noMoreRoles", () => {
   alert("Désolé, il n'y a plus de rôles disponibles pour cette partie.");
 });
+
+socket.on('updateRole', (data) => {
+  console.log('Votre rôle a changé :', data.role);
+  roleImage.src = `/images/${data.role.toLowerCase().replace(' ', '-')}.png`;
+});

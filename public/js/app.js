@@ -3,6 +3,8 @@ const socket = io();
 let audio;
 let mayorSound;
 
+const thiefSound = new Audio('/mp3/voleur.mp3');
+
 document.addEventListener("DOMContentLoaded", () => {
   audio = new Audio("/mp3/dead.mp3");
   mayorSound = new Audio("/mp3/maire-elu.mp3");
@@ -112,4 +114,9 @@ socket.on("gameResumed", () => {
   if (overlay) {
     overlay.style.display = "none";
   }
+});
+
+socket.on('playThiefSound', () => {
+    console.log("Le voleur change de rôle, jouer le son !");
+    thiefSound.play();
 });

@@ -20,6 +20,7 @@ let rolesConfig = {
 };
 
 let players = [];
+let playerSockets = {};
 
 app.use(express.static("public"));
 app.get("/api/getPlayers", (req, res) => {
@@ -28,9 +29,12 @@ app.get("/api/getPlayers", (req, res) => {
 
 io.on("connection", (socket) => {
   console.log("Nouvelle connexion client");
+
   socket.emit("rolesConfig", rolesConfig);
+
   socket.on("addPlayer", (playerData) => {
     const assignedRole = assignRoleToPlayer();
+
     if (assignedRole === "Aucun rôle disponible") {
       socket.emit("noMoreRoles");
       return;
@@ -44,7 +48,11 @@ io.on("connection", (socket) => {
     };
 
     players.push(newPlayer);
+
+    playerSockets[newPlayer.name] = socket.id;
+
     io.emit("updatePlayers", players);
+
     socket.emit("playerAdded", newPlayer);
   });
 
@@ -116,19 +124,25 @@ io.on("connection", (socket) => {
     const thiefRole = thief.role;
     thief.role = target.role;
     target.role = "Villageois";
-    io.emit("updatePlayers", players);
-  });
 
-  socket.on("changePlayerRole", ({ name, newRole }) => {
-    const player = players.find((p) => p.name === name);
-    if (player) {
-      player.role = newRole;
-      io.emit("updatePlayers", players);
+    io.emit("updatePlayers", players);
+
+    io.emit("playThiefSound");
+    
+    const thiefSocketId = getPlayerSocketId(thiefName);
+    if (thiefSocketId) {
+        io.to(thiefSocketId).emit("updateRole", { role: thief.role });
     }
   });
 
+
   socket.on("disconnect", () => {
     console.log("Client déconnecté");
+    for (let playerName in playerSockets) {
+      if (playerSockets[playerName] === socket.id) {
+        delete playerSockets[playerName];
+      }
+    }
   });
 });
 
@@ -160,7 +174,13 @@ function assignRoleToPlayer() {
     }
   }
 
-  const randomRole = availableRoles[Math.floor(Math.random() * availableRoles.length)];
+  const randomRole =
+    availableRoles[Math.floor(Math.random() * availableRoles.length)];
   rolesConfig[randomRole].assigned++;
   return randomRole;
+}
+
+
+function getPlayerSocketId(playerName) {
+  return playerSockets[playerName];
 }
