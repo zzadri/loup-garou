@@ -4,6 +4,7 @@ let audio;
 let mayorSound;
 
 const thiefSound = new Audio('/mp3/voleur.mp3');
+const magicSound = new Audio('/mp3/magie.mp3');
 
 document.addEventListener("DOMContentLoaded", () => {
   audio = new Audio("/mp3/dead.mp3");
@@ -82,6 +83,27 @@ socket.on("playerDied", (playerName) => {
   if (audio) {
     audio.play();
   }
+});
+
+socket.on('playMagicSound', () => {
+  console.log("Jouer le son de magie !");
+  magicSound.play();
+});
+
+socket.on('showPlayerRole', ({ name, role }) => {
+  console.log(`Afficher le rôle de ${name} : ${role}`);
+  const roleCard = document.createElement('div');
+  roleCard.classList.add('player-role-card');
+  roleCard.innerHTML = `
+      <h2>${name}</h2>
+      <img src="/images/${role.toLowerCase().replace(' ', '-')}.png" alt="${role}">
+  `;
+
+  document.body.appendChild(roleCard);
+
+  setTimeout(() => {
+      roleCard.remove();
+  }, 3000);
 });
 
 socket.on("playerBecameMayor", (playerName) => {

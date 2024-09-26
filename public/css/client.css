@@ -112,3 +112,30 @@ h1 {
     z-index: 1000;
     display: none;
 }
+
+.player-role-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.player-role-card {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #34495e;
+    padding: 20px;
+    border: 3px solid black;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    z-index: 1000;
+}
+
+.player-role-card img {
+    width: 200px;
+    height: 200px;
+    display: block;
+    margin: 0 auto;
+}

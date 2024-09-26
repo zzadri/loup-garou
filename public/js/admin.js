@@ -92,8 +92,17 @@ function generatePlayerCard(player) {
   exchangeIcon.onclick = () => selectPlayerForExchange(player.name);
   playerIcons.appendChild(exchangeIcon);
 
+  const eyeIcon = document.createElement('i');
+  eyeIcon.classList.add('fas', 'fa-eye', 'fa-fw');
+  eyeIcon.onclick = () => showRoleOnTV(player.name, player.role);
+  playerIcons.appendChild(eyeIcon);
+
   playerCard.appendChild(playerIcons);
   return playerCard;
+}
+
+function showRoleOnTV(playerName, playerRole) {
+  socket.emit('showRoleOnTV', { name: playerName, role: playerRole });
 }
 
 function togglePlayerDeath(playerName, isAlive) {

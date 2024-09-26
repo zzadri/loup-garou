@@ -93,6 +93,12 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on('showRoleOnTV', ({ name, role }) => {
+    console.log(`Montrer le rôle de ${name} (${role}) sur la TV`);
+    io.emit('showPlayerRole', { name, role });
+    io.emit('playMagicSound');
+  });
+
   socket.on("assignMother", (playerName) => {
     players.forEach((player) => {
       if (player.name === playerName) {
@@ -128,7 +134,7 @@ io.on("connection", (socket) => {
     io.emit("updatePlayers", players);
 
     io.emit("playThiefSound");
-    
+
     const thiefSocketId = getPlayerSocketId(thiefName);
     if (thiefSocketId) {
         io.to(thiefSocketId).emit("updateRole", { role: thief.role });
