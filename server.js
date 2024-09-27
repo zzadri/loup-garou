@@ -15,12 +15,17 @@ let rolesConfig = {
   Voyante: { count: 1, assigned: 0, probability: 0.1 },
   Voleur: { count: 1, assigned: 0, probability: 0.1 },
   "Petite-Fille": { count: 1, assigned: 0, probability: 0.1 },
-  Ancien: { count: 1, assigned: 0, probability: 0.1 },
-  Juge: { count: 1, assigned: 0, probability: 0.1 },
+  Ancien: { count: 0, assigned: 0, probability: 0.1 },
+  Juge: { count: 0, assigned: 0, probability: 0.1 },
+  "Loup-blanc": { count: 0, assigned: 0, probability: 0.1 },
+  Idiot: { count: 0, assigned: 0, probability: 0.1 },
+  Ange: { count: 0, assigned: 0, probability: 0.1 },
+  "Montreur d'ours": { count: 0, assigned: 0, probability: 0.1 },
 };
 
 let players = [];
 let playerSockets = {};
+let ancienKilledOnce = false;
 
 app.use(express.static("public"));
 app.get("/api/getPlayers", (req, res) => {
@@ -61,12 +66,24 @@ io.on("connection", (socket) => {
     console.log("Configuration des rôles mise à jour", rolesConfig);
     io.emit("rolesConfig", rolesConfig);
   });
+
   socket.on("killPlayer", (playerName) => {
     const player = players.find((p) => p.name === playerName);
     if (player) {
-      player.alive = false;
-      io.emit("updatePlayers", players);
-      io.emit("playerDied", playerName);
+      if (player.role === "Ancien" && !ancienKilledOnce) {
+        ancienKilledOnce = true;
+        player.role = "Villageois";
+        io.emit("updatePlayers", players);
+        socket.emit("ancienToVillageois", playerName);
+        console.log(
+          `L'Ancien (${playerName}) a survécu et est maintenant un Villageois.`
+        );
+      } else {
+        player.alive = false;
+        io.emit("updatePlayers", players);
+        io.emit("playerDied", playerName);
+        console.log(`${playerName} a été tué.`);
+      }
     }
   });
 
@@ -85,19 +102,19 @@ io.on("connection", (socket) => {
 
     if (playerIndex !== -1) {
       const playerRole = players[playerIndex].role;
-      
+
       if (rolesConfig[playerRole]) {
         rolesConfig[playerRole].assigned--;
       }
 
       const playerSocketId = getPlayerSocketId(playerName);
-      
+
       if (playerSocketId) {
         io.to(playerSocketId).emit("redirectToLogin");
       }
 
       players.splice(playerIndex, 1);
-      
+
       io.emit("updatePlayers", players);
     }
   });
@@ -162,17 +179,20 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on('endGame', () => {
+  socket.on("endGame", () => {
     console.log("Fin de partie déclenchée par l'administrateur.");
+
     players = [];
-    Object.keys(rolesConfig).forEach(role => {
-        rolesConfig[role].assigned = 0;
+    Object.keys(rolesConfig).forEach((role) => {
+      rolesConfig[role].assigned = 0;
     });
-    io.emit('gameEnded');
-    io.emit('updatePlayers', players);
+
+    ancienKilledOnce = false;
+
+    io.emit("gameEnded");
+    io.emit("updatePlayers", players);
     io.emit("redirectToLogin");
   });
-  
 });
 
 server.listen(3000, () => {

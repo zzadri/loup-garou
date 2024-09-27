@@ -14,19 +14,23 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
   socket.on("rolesConfig", (rolesConfig) => {
-    const roleList = document.getElementById("roleList");
+    const roleList = document.getElementById("roleConfig");
     const playerRoleSelect = document.getElementById("playerRole");
 
     roleList.innerHTML = "";
     playerRoleSelect.innerHTML = "";
 
     Object.keys(rolesConfig).forEach((role) => {
-      const roleDiv = document.createElement("div");
-      roleDiv.innerHTML = `
-                <label>${role}</label>
-                <input type="number" id="${role}Count" value="${rolesConfig[role].count}" min="0">
-            `;
-      roleList.appendChild(roleDiv);
+      const roleCard = document.createElement("div");
+      roleCard.classList.add("role-card");
+
+      roleCard.innerHTML = `
+          <img src="/images/${role.toLowerCase().replace(' ', '-')}.png" alt="${role}">
+          <h4>${role}</h4>
+          <input type="number" id="${role}Count" value="${rolesConfig[role].count}" min="0">
+      `;
+
+      roleList.appendChild(roleCard);
 
       const option = document.createElement("option");
       option.value = role;
@@ -35,6 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
+
 
 function addPlayer() {
   let playerName = document.getElementById("playerName").value;
@@ -137,9 +142,9 @@ function assignRandomRoles() {
 
 function updateRoleConfig() {
   const newRoleConfig = {};
-  document.querySelectorAll("#roleList div").forEach((roleDiv) => {
-    const roleLabel = roleDiv.querySelector("label").innerText;
-    const roleCount = roleDiv.querySelector("input").value;
+  document.querySelectorAll("#roleConfig .role-card").forEach((roleCard) => {
+    const roleLabel = roleCard.querySelector("h4").innerText;
+    const roleCount = roleCard.querySelector("input").value;
     newRoleConfig[roleLabel] = { count: parseInt(roleCount), assigned: 0 };
   });
 
