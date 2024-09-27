@@ -142,3 +142,11 @@ socket.on('playThiefSound', () => {
     console.log("Le voleur change de rôle, jouer le son !");
     thiefSound.play();
 });
+
+socket.on('gameEnded', () => {
+  console.log("La partie est terminée. Réinitialisation des interfaces.");
+  document.getElementById('playersList').innerHTML = '';
+  if (window.location.pathname.includes('app.html')) {
+      window.location.reload();
+  }
+});

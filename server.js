@@ -85,18 +85,27 @@ io.on("connection", (socket) => {
 
     if (playerIndex !== -1) {
       const playerRole = players[playerIndex].role;
+      
       if (rolesConfig[playerRole]) {
         rolesConfig[playerRole].assigned--;
       }
+
+      const playerSocketId = getPlayerSocketId(playerName);
+      
+      if (playerSocketId) {
+        io.to(playerSocketId).emit("redirectToLogin");
+      }
+
       players.splice(playerIndex, 1);
+      
       io.emit("updatePlayers", players);
     }
   });
 
-  socket.on('showRoleOnTV', ({ name, role }) => {
+  socket.on("showRoleOnTV", ({ name, role }) => {
     console.log(`Montrer le rôle de ${name} (${role}) sur la TV`);
-    io.emit('showPlayerRole', { name, role });
-    io.emit('playMagicSound');
+    io.emit("showPlayerRole", { name, role });
+    io.emit("playMagicSound");
   });
 
   socket.on("assignMother", (playerName) => {
@@ -128,19 +137,21 @@ io.on("connection", (socket) => {
     }
 
     const thiefRole = thief.role;
+
     thief.role = target.role;
+
     target.role = "Villageois";
 
     io.emit("updatePlayers", players);
-
-    io.emit("playThiefSound");
-
     const thiefSocketId = getPlayerSocketId(thiefName);
     if (thiefSocketId) {
-        io.to(thiefSocketId).emit("updateRole", { role: thief.role });
+      io.to(thiefSocketId).emit("updateRole", { role: thief.role });
+    }
+    const targetSocketId = getPlayerSocketId(targetName);
+    if (targetSocketId) {
+      io.to(targetSocketId).emit("updateRole", { role: target.role });
     }
   });
-
 
   socket.on("disconnect", () => {
     console.log("Client déconnecté");
@@ -150,6 +161,18 @@ io.on("connection", (socket) => {
       }
     }
   });
+
+  socket.on('endGame', () => {
+    console.log("Fin de partie déclenchée par l'administrateur.");
+    players = [];
+    Object.keys(rolesConfig).forEach(role => {
+        rolesConfig[role].assigned = 0;
+    });
+    io.emit('gameEnded');
+    io.emit('updatePlayers', players);
+    io.emit("redirectToLogin");
+  });
+  
 });
 
 server.listen(3000, () => {
@@ -185,7 +208,6 @@ function assignRoleToPlayer() {
   rolesConfig[randomRole].assigned++;
   return randomRole;
 }
-
 
 function getPlayerSocketId(playerName) {
   return playerSockets[playerName];

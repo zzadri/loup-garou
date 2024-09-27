@@ -174,3 +174,9 @@ function selectPlayerForExchange(playerName) {
 function exchangeRolesWithThief(thiefName, targetName) {
   socket.emit("thiefSwitchRole", { thiefName, targetName });
 }
+
+function endGame() {
+    if (confirm("Êtes-vous sûr de vouloir terminer la partie ? Tous les joueurs seront supprimés.")) {
+        socket.emit('endGame');
+    }
+}

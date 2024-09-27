@@ -46,7 +46,17 @@ socket.on("noMoreRoles", () => {
   alert("Désolé, il n'y a plus de rôles disponibles pour cette partie.");
 });
 
+// Ajouter cet événement pour recevoir la mise à jour du rôle
 socket.on('updateRole', (data) => {
   console.log('Votre rôle a changé :', data.role);
+
+  // Mettre à jour l'image de la carte avec le nouveau rôle
   roleImage.src = `/images/${data.role.toLowerCase().replace(' ', '-')}.png`;
+});
+
+
+// Écouter l'événement de redirection
+socket.on('redirectToLogin', () => {
+  console.log("redirection vers la page de connexion.");
+  window.location.reload();
 });
