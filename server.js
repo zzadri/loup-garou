@@ -1,5 +1,6 @@
 const express = require("express");
 const http = require("http");
+const path = require("path");
 const socketIo = require("socket.io");
 
 const app = express();
@@ -27,10 +28,12 @@ let players = [];
 let playerSockets = {};
 let ancienKilledOnce = false;
 
+app.use(express.static(path.join(__dirname,"frontend","dist")));
 app.use(express.static("public"));
 app.get("/api/getPlayers", (req, res) => {
   res.json(players);
 });
+app.get("*",(req,res)=>res.sendFile(path.join(__dirname,"frontend","dist","index.html")));
 
 io.on("connection", (socket) => {
   console.log("Nouvelle connexion client");
