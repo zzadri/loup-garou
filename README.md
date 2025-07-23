@@ -32,8 +32,8 @@ A web-based multiplayer **Loup Garou (Werewolf)** game designed to be played thr
     ```
 
 4. Open your browser and access the different clients:
-    - **Admin Client**: `http://localhost:3000/admin.html`
-    - **TV Client**: `http://localhost:3000/tv.html`
+    - **Admin Client**: `http://localhost:3000/admin`
+    - **TV Client**: `http://localhost:3000/tv`
     - **Mobile Client**: `http://localhost:3000/`
 
 ---
@@ -72,6 +72,6 @@ Un jeu multijoueur **Loup Garou (Werewolf)** basé sur le web, conçu pour être
     ```
 
 4. Ouvrir votre navigateur et accéder aux différents clients :
-    - **Client Admin** : `http://localhost:3000/admin.html`
-    - **Client TV** : `http://localhost:3000/tv.html`
+    - **Client Admin** : `http://localhost:3000/admin`
+    - **Client TV** : `http://localhost:3000/tv`
     - **Client Mobile** : `http://localhost:3000/`
